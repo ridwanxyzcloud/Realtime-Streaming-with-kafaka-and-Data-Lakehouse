@@ -112,6 +112,31 @@ services:
     networks:
       - ridwanclouds
 
+  spark-master:
+    image: bitnami/spark:latest
+    command: bin/spark-class org.apache.spark.deploy.master.Master
+    volumes:
+      - ./jobs:/opt/bitnami/spark/jobs
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    networks:
+      - ridwanclouds
+
+  spark-worker:
+    image: bitnami/spark:latest
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7070
+    depends_on:
+      - spark-master
+    volumes:
+      - ./jobs:/opt/bitnami/spark/jobs
+    environment:
+      SPARK_MODE: worker
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_MASTER_URL: spark://spark-master:7070
+    networks:
+      - ridwanclouds
 
   schema-registry:
     image: confluentinc/cp-schema-registry

@@ -1,0 +1,5 @@
+minio
+pyspark
+pandas
+pyarrow
+fastparquet
